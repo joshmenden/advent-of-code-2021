@@ -1,36 +1,49 @@
 require "byebug"
-fname = "example.txt"
+fname = "input.txt"
 
+fresh_fish = {
+  8 => 0,
+  7 => 0,
+  6 => 0,
+  5 => 0,
+  4 => 0,
+  3 => 0,
+  2 => 0,
+  1 => 0,
+  0 => 0,
+}
 
-class LanternFish
-  attr_accessor :timer
-
-  def initialize(timer:)
-    @timer = timer
-  end
-end
-
-fishes = []
+fishes = {
+  8 => 0,
+  7 => 0,
+  6 => 0,
+  5 => 0,
+  4 => 0,
+  3 => 0,
+  2 => 0,
+  1 => 0,
+  0 => 0,
+}
 
 content = File.read(fname)
 content.split(",").each do |age|
-  fishes.push(LanternFish.new(timer: age.to_i))
+  fishes[age.to_i] += 1
 end
 
-for day in 1..256 do
-  # puts fishes.map(&:timer).join(" ")
 
-  new_fish = []
-  fishes.each do |fish|
-    if fish.timer == 0
-      new_fish.push(LanternFish.new(timer: 8))
-      fish.timer = 6
+for day in 1..256 do
+  todays_fish = fresh_fish.dup
+  fishes.each_key do |k|
+    next if fishes[k] == 0
+    if k > 0
+      todays_fish[k - 1] += fishes[k]
     else
-      fish.timer -= 1
+      todays_fish[6] += fishes[k]
+      todays_fish[8] += fishes[k]
     end
   end
 
-  fishes = fishes.concat(new_fish)
+  fishes = todays_fish
 end
 
-puts fishes.count
+puts fishes.values.reduce(:+)
